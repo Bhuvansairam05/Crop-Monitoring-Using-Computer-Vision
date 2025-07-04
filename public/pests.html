@@ -6,7 +6,6 @@
   <title>Pest & Care Suggestions | Smart Farm Monitor</title>
   <link rel="stylesheet" href="css/style.css" />
   <style>
-    /* Additional styles specific to this page */
     .mainContainer {
       max-width: 900px;
       margin: 2rem auto;
@@ -147,7 +146,6 @@
   </footer>
 
   <script>
-    // Data for crop pests and care by crop and season
     const cropData = {
       Tomato: {
         Kharif: {
@@ -228,8 +226,6 @@
         alert("Please enter both crop name and season.");
         return;
       }
-
-      // Normalize crop name (capitalize first letter, rest lowercase)
       const cropName = cropNameInput.charAt(0).toUpperCase() + cropNameInput.slice(1).toLowerCase();
 
       if (!(cropName in cropData)) {
@@ -243,16 +239,12 @@
         resultsSection.style.display = "none";
         return;
       }
-
-      // Show results
       resultCrop.textContent = cropName;
       resultSeason.textContent = seasonInput;
 
-      // Clear previous results
+
       pestList.innerHTML = "";
       careList.innerHTML = "";
-
-      // Populate pests
       cropData[cropName][seasonInput].pests.forEach(pest => {
         const li = document.createElement('li');
         li.style.marginBottom = '1rem';
@@ -273,7 +265,6 @@
         pestList.appendChild(li);
       });
 
-      // Populate care tips
       cropData[cropName][seasonInput].care.forEach(care => {
         const li = document.createElement('li');
         li.style.marginBottom = '1rem';

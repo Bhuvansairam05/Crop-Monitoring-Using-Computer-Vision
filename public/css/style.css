@@ -270,7 +270,14 @@ form textarea {
   resize: vertical;
   transition: border-color 0.3s ease;
 }
-
+#analyzeBtn{
+  background-color: green;
+  color: white;
+  border: 2px solid transparent;
+  padding:10px;
+  font-size: 20px;
+  border-radius: 20px;
+}
 form input:focus,
 form textarea:focus {
   border-color: #2980b9;
