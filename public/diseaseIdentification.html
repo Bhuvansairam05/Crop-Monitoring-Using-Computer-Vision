@@ -51,7 +51,6 @@
         border-radius: 0.5rem;
         color: #2a7ab9;
         font-weight: 600;
-        display: none;
       }
     </style>
   </head>
@@ -97,9 +96,12 @@
       const imageInput = document.querySelector("#imageInput");
       const resultDiv = document.querySelector("#resultBox");
 
-      document.getElementById("analyzeBtn").addEventListener("click", () => {
+      document.getElementById("analyzeBtn").addEventListener("click", function(e) {
+        e.preventDefault();
+        // resultDiv.style.display = "block";
         const resultDiv = document.getElementById("resultBox");
-        console.log("🌿 Plant.id analyze button clicked");
+        resultDiv.innerHTML = "<p>Analyzing...</p>";
+        console.log(" Plant.id analyze button clicked");
         if (!imageInput.files.length) {
           alert("Please upload an image");
           return;
@@ -112,7 +114,11 @@
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log("🌿 Plant.id response:", data); 
+            if(data.is_plant === false) {
+              resultDiv.innerHTML = "<p>No plant detected in the image.</p>";
+              return;
+            }
+            console.log(" Plant.id response:", data); 
             const healthyProb = data.health_assessment?.is_healthy_probability || null;
             const diseases = data.health_assessment?.diseases || [];
             resultDiv.innerHTML = `
@@ -126,18 +132,19 @@
               ? diseases
                   .map(
                     (d) =>
-                      `<li><strong>${d.name}</strong> (${(
+                      `<p><strong>${d.name}</strong> (${(
                         d.probability * 100
-                      ).toFixed(1)}%)</li>`
+                      ).toFixed(1)}%)</p><br>
+                      <p>It can be cured by using ${d.disease_details.treatment.biological}.</p>`
                   )
                   .join("")
-              : "<li>None detected</li>"
+              : "<p>None detected</p>"
           }
         </ul>
       `;
           })
           .catch((err) => {
-            console.error("❌ Error fetching:", err);
+            console.error("Error fetching:", err);
             resultDiv.textContent = "Something went wrong!";
           });
       });
