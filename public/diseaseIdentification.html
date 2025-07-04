@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Disease Identification</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <style>
+      main {
+        padding: 2rem 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .card {
+        background-color: #ffffff;
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .card h2 {
+        color: #2a7ab9;
+        margin-bottom: 1rem;
+      }
+
+      .upload-area {
+        border: 2px dashed #2a7ab9;
+        border-radius: 0.75rem;
+        padding: 2rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .upload-area:hover {
+        background-color: #f0f8ff;
+      }
+
+      .upload-area input {
+        display: none;
+      }
+
+      .result {
+        margin-top: 1.5rem;
+        background-color: #f0f8ff;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        color: #2a7ab9;
+        font-weight: 600;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1 class="logo">Crop Monitoring</h1>
+        <nav>
+          <ul class="nav-links">
+            <li><a href="../index.html" class="active">Home</a></li>
+            <li><a href="../about.html">About</a></li>
+            <li><a href="../features.html">Features</a></li>
+            <li><a href="../pests.html">Pests</a></li>
+            <li><a href="../contact.html">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="card">
+        <h2>Upload Plant Image</h2>
+        <br /><br />
+        <label class="upload-area">
+          <span>Click to upload or drag and drop image here</span>
+          <input type="file" id="imageInput" />
+        </label>
+        <br /><br /><br />
+        <br /><br />
+        <button id="analyzeBtn">Analyze</button>
+        <div class="result" id="resultBox"></div>
+      </div>
+      <br />
+      <br />
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 Crop Monitoring Using Computer Vision</p>
+      </div>
+    </footer>
+    <script>
+      const imageInput = document.querySelector("#imageInput");
+      const resultDiv = document.querySelector("#resultBox");
+
+      document.getElementById("analyzeBtn").addEventListener("click", () => {
+        const resultDiv = document.getElementById("resultBox");
+        console.log("🌿 Plant.id analyze button clicked");
+        if (!imageInput.files.length) {
+          alert("Please upload an image");
+          return;
+        }
+        const formData = new FormData();
+        formData.append("image", imageInput.files[0]);
+        fetch("http://localhost:4000/analyze", {
+          method: "POST",
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("🌿 Plant.id response:", data); 
+            const healthyProb = data.health_assessment?.is_healthy_probability || null;
+            const diseases = data.health_assessment?.diseases || [];
+            resultDiv.innerHTML = `
+        <p><strong>Health Confidence:</strong> ${
+          healthyProb ? (healthyProb * 100).toFixed(2) + "%" : "N/A"
+        }</p>
+        <p><strong>Detected Diseases:</strong></p>
+        <ul>
+          ${
+            diseases.length
+              ? diseases
+                  .map(
+                    (d) =>
+                      `<li><strong>${d.name}</strong> (${(
+                        d.probability * 100
+                      ).toFixed(1)}%)</li>`
+                  )
+                  .join("")
+              : "<li>None detected</li>"
+          }
+        </ul>
+      `;
+          })
+          .catch((err) => {
+            console.error("❌ Error fetching:", err);
+            resultDiv.textContent = "Something went wrong!";
+          });
+      });
+    </script>
+  </body>
+</html>
