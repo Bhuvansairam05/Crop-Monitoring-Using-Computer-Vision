@@ -115,6 +115,10 @@
               resultDiv.innerHTML = "<p>No plant detected in the image.</p>";
               return;
             }
+            if(data.health_assessment.is_healthy === true) {
+              resultDiv.innerHTML = "<p>The plant is healthy!</p>";
+              return;
+            }
             console.log(" Plant.id response:", data); 
             const healthyProb = data.health_assessment?.is_healthy_probability || null;
             const diseases = data.health_assessment?.diseases || [];
