@@ -101,6 +101,7 @@
         console.log(" Plant.id analyze button clicked");
         if (!imageInput.files.length) {
           alert("Please upload an image");
+          resultDiv.innerHTML="<p></p>";
           return;
         }
         const formData = new FormData();
